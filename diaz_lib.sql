@@ -2,9 +2,6 @@ SHOW DATABASES;
 CREATE DATABASE diaz_lib;
 USE diaz_lib;
 
-CREATE DATABASE diaz_lib;
-USE diaz_lib;
-
 CREATE TABLE books (
     book_id INT PRIMARY KEY AUTO_INCREMENT,
     book_title VARCHAR(200) NOT NULL,
@@ -56,13 +53,16 @@ INSERT INTO books (book_title, book_author, available_copies) VALUES
 
 -- Insert members
 INSERT INTO members (member_name, member_email, member_phone, join_date) VALUES
-('Alice Johnson', 'alice@example.com', '1234567890', '2023-01-10'),
-('Bob Smith', 'bob@example.com', '1234567891', '2023-02-15'),
-('Charlie Brown', 'charlie@example.com', '1234567892', '2023-03-20'),
-('David White', 'david@example.com', '1234567893', '2023-04-25'),
-('Emma Black', 'emma@example.com', '1234567894', '2023-05-30'),
-('Frank Green', 'frank@example.com', '1234567895', '2023-06-15'),
-('Grace Adams', 'grace@example.com', '1234567896', '2023-07-10'),
-('Hannah Wright', 'hannah@example.com', '1234567897', '2023-08-05'),
-('Ian King', 'ian@example.com', '1234567898', '2023-09-20'),
-('Julia Scott', 'julia@example.com', '1234567899', '2023-10-10');
+('Alicia Montesdeoca', 'alice@hotmail.com', '1536412065', '2023-02-10'),
+('Bob Smith', 'bob@gmail.com', '120149891', '2023-02-19'),
+('Carlos Izquierdo', 'charlie@hotmail.com', '1235467092', '2023-03-21'),
+('David Zambrano', 'david@outlook.com', '18955103', '2023-04-29'),
+('Emilia Bermudez', 'emma@gmail.com', '1699451200', '2023-05-18'),
+('Franklin Guerra', 'frank@icloud.com', '1542320212', '2023-07-15'),
+('Grace Gallardo', 'grace@yahoo.es', '1988954387', '2023-07-16'),
+('John Lennon', 'john_beatles@montana.com', '1563265232', '2023-08-01'),
+('Ivan Saquicela', 'ian@ups.edu.ec', '1457241575', '2023-10-20'),
+('Julia Cañizares', 'chicha@gmail.com', '1212125862', '2023-11-10');
+--
+select * FROM BOOKS;
+SELECT * FROM members;
