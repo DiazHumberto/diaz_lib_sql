@@ -43,16 +43,16 @@ CREATE TABLE overdue_notification (
 
 -- Insert books
 INSERT INTO books (book_title, book_author, available_copies) VALUES
-('Unemploymet Canadas problem', 'P. Gilman', 3),
-('To Kill a Mockingbird', 'Harper Lee', 5),
-('1984', 'George Orwell', 2),
-('Moby Dick', 'Herman Melville', 4),
-('Pride and Prejudice', 'Jane Austen', 3),
-('The Hobbit', 'J.R.R. Tolkien', 6),
-('War and Peace', 'Leo Tolstoy', 1),
-('Crime and Punishment', 'Fyodor Dostoevsky', 2),
-('The Great Gatsby', 'F. Scott Fitzgerald', 4),
-('Brave New World', 'Aldous Huxley', 3);
+('Unemployment Canadas problem', 'P. Gilman', 3),
+('The Origin of Species', 'Charles Darwin', 5),
+('Permiso Jose Delgado, me la saco...', 'Jorge Naranjo Peñafiel', 2),
+('JFK', 'Fredrik Logevall', 4),
+('Homelessness and Drugs', 'Cara Pito', 3),
+('MySQL, How to strive', 'Eleazar Mariduena', 6),
+('Analysing Mein Kampf', 'Pirulo Avila', 1),
+('El Amor de mi Vida', 'Daniela D. Indarte', 2),
+('Amor en Tiempos de Ñengosos', 'El Brayan', 4),
+('Arrecho Nunca Muere; y si Muere, Muere Arrecho', 'Jose Delgado', 3);
 
 -- Insert members
 INSERT INTO members (member_name, member_email, member_phone, join_date) VALUES
