@@ -1,5 +1,6 @@
-SHOW DATABASES;
+DROP DATABASE diaz_lib;
 CREATE DATABASE diaz_lib;
+SHOW DATABASES;
 USE diaz_lib;
 
 CREATE TABLE books (
@@ -40,29 +41,30 @@ CREATE TABLE overdue_notification (
 
 -- Insert books
 INSERT INTO books (book_title, book_author, available_copies) VALUES
-('Unemployment Canadas problem', 'P. Gilman', 3),
-('The Origin of Species', 'Charles Darwin', 5),
-('Permiso Jose Delgado, me la saco...', 'Jorge Naranjo Peñafiel', 2),
-('JFK', 'Fredrik Logevall', 4),
+('Unemployment Canadas problem', 'P. Gilman', 2),
+('The Origin of Species', 'Charles Darwin', 4),
+('Permiso Jose Delgado, me la saco...', 'Jorge Naranjo Peñafiel', 7),
+('JFK', 'Fredrik Logevall', 1),
 ('Homelessness and Drugs', 'Cara Pito', 3),
-('MySQL, How to strive', 'Eleazar Mariduena', 6),
+('MySQL, How to strive', 'Eleazar Mariduena', 4),
 ('Analysing Mein Kampf', 'Pirulo Avila', 1),
-('El Amor de mi Vida', 'Daniela D. Indarte', 2),
+('El Amor de mi Vida', 'Daniela D. Indarte', 10),
 ('Amor en Tiempos de Ñengosos', 'El Brayan', 4),
 ('Arrecho Nunca Muere; y si Muere, Muere Arrecho', 'Jose Delgado', 3);
 
+
 -- Insert members
 INSERT INTO members (member_name, member_email, member_phone, join_date) VALUES
-('Alicia Montesdeoca', 'alice@hotmail.com', '1536412065', '2023-02-10'),
-('Bob Smith', 'bob@gmail.com', '120149891', '2023-02-19'),
+('Alicia Montesdeoca', 'alice@hotmail.com', '1536412065', '2022-09-10'),
+('Hector Canizares', 'canizares_h@gmail.com', '120149891', '2022-12-19'),
 ('Carlos Izquierdo', 'charlie@hotmail.com', '1235467092', '2023-03-21'),
 ('David Zambrano', 'david@outlook.com', '18955103', '2023-04-29'),
-('Emilia Bermudez', 'emma@gmail.com', '1699451200', '2023-05-18'),
-('Franklin Guerra', 'frank@icloud.com', '1542320212', '2023-07-15'),
-('Grace Gallardo', 'grace@yahoo.es', '1988954387', '2023-07-16'),
-('John Lennon', 'john_beatles@montana.com', '1563265232', '2023-08-01'),
-('Ivan Saquicela', 'ian@ups.edu.ec', '1457241575', '2023-10-20'),
-('Julia Cañizares', 'chicha@gmail.com', '1212125862', '2023-11-10');
+('Emilia Bermudez', 'emma@gmail.com', '1699451200', '2023-05-03'),
+('Franklin Guerra', 'frank@icloud.com', '1542320212', '2023-05-15'),
+('Grace Gallardo', 'grace@yahoo.es', '1988954387', '2023-09-06'),
+('John Lennon', 'john_beatles@montana.com', '1563265232', '2024-08-07'),
+('Ivan Saquicela', 'ian@ups.edu.ec', '1457241575', '2024-10-21'),
+('Julia Cañizares', 'chicha@gmail.com', '1212125862', '2024-11-10');
 --
 select * FROM BOOKS;
 SELECT * FROM members;
@@ -71,28 +73,30 @@ select * from overdue_notification;
 
 -- ------------------------CREATING TRIGGERS AND EVENT--------------------------
 -- 1. TRIGGER FOR BOOK LOAN PROCESS---------------------------
+
 DELIMITER //
 CREATE TRIGGER before_loan_insert
 BEFORE INSERT ON loans
 FOR EACH ROW
 BEGIN
     DECLARE available INT;
-
     -- Check if the book exists
     SELECT available_copies INTO available FROM books WHERE book_id = NEW.book_id;
-    
-    IF available IS NULL THEN
+        IF available IS NULL THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Book does not exist in the database';
+        SET MESSAGE_TEXT = 'Unfortunately this book does not exist in this database. :(';
     END IF;
-
     -- Check if the book is available
     IF available <= 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'The book is currently out of stock.';
+        SET MESSAGE_TEXT = 'Sorry, we do not have this book at the moment.';
     ELSE
         -- Reduce available copies
         UPDATE books SET available_copies = available_copies - 1 WHERE book_id = NEW.book_id;
+        -- Set due_date automatically to 3 days
+        IF NEW.due_date IS NULL THEN
+            SET NEW.due_date = DATE_ADD(NEW.loan_date, INTERVAL 3 DAY);
+		END IF;
     END IF;
 END;
 //
@@ -115,8 +119,6 @@ END;
 //
 DELIMITER ;
 
-
-
 -- 3. Scheduled Event for Overdue Notifications----------------------------
 DELIMITER //
 CREATE EVENT overdue_book_notification
@@ -124,7 +126,7 @@ ON SCHEDULE EVERY 30 SECOND
 DO
 BEGIN
     INSERT INTO overdue_notification (member_id, book_id, notification_date, message)
-    SELECT l.member_id, l.book_id, NOW(), 'Your book is overdue. Please return it as soon as possible.'
+    SELECT l.member_id, l.book_id, NOW(), 'Your book is overdue. Please return it NOW!!! >:('
     FROM loans l
     WHERE l.due_date < NOW() AND l.return_date IS NULL;
 END;
@@ -133,39 +135,23 @@ DELIMITER ;
 
 
 -- -----------------------------TESTING-------------------------------
--- Successful Loan
-INSERT INTO loans (member_id, book_id, loan_date, due_date) VALUES 
-(1, 1, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 14 DAY));
 
--- Attempt to loan a non-existing book
-INSERT INTO loans (member_id, book_id, loan_date, due_date) VALUES 
-(1, 999, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 14 DAY));
+select * FROM BOOKS;
+SELECT * FROM members;
+SELECT * FROM loans;
+select * from overdue_notification;
 
--- Attempt to loan an out-of-stock book (after multiple loans)
-INSERT INTO loans (member_id, book_id, loan_date, due_date) VALUES 
-(2, 7, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 14 DAY));
+INSERT INTO loans (member_id, book_id, loan_date) VALUES (1, 1, '2025-02-01');
+INSERT INTO loans (member_id, book_id, loan_date) VALUES (2, 1, CURDATE());
+SELECT * FROM loans;
 
+UPDATE loans SET return_date = '2025-03-04' WHERE loan_id = 2;
+SELECT * FROM books WHERE book_id = 1;
 
+UPDATE loans SET return_date = '2025-03-09' WHERE loan_id = 2;
 
-
-
--- Returning a book
-UPDATE loans SET return_date = CURDATE() WHERE loan_id = 1;
-
-
-
-
-
-
--- Manually insert an overdue loan
-INSERT INTO loans (member_id, book_id, loan_date, due_date) VALUES 
-(3, 2, '2024-01-01', '2024-01-10');
-
--- Wait 30 seconds and check notifications
 SELECT * FROM overdue_notification;
-
-
-
+drop event overdue_book_notification;
 
 
 
