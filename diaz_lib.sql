@@ -1,7 +1,27 @@
+
+
+
 DROP DATABASE diaz_lib;
 CREATE DATABASE diaz_lib;
-SHOW DATABASES;
 USE diaz_lib;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 CREATE TABLE books (
     book_id INT PRIMARY KEY AUTO_INCREMENT,
@@ -51,8 +71,6 @@ INSERT INTO books (book_title, book_author, available_copies) VALUES
 ('El Amor de mi Vida', 'Daniela D. Indarte', 10),
 ('Amor en Tiempos de Ñengosos', 'El Brayan', 4),
 ('Arrecho Nunca Muere; y si Muere, Muere Arrecho', 'Jose Delgado', 3);
-
-
 -- Insert members
 INSERT INTO members (member_name, member_email, member_phone, join_date) VALUES
 ('Alicia Montesdeoca', 'alice@hotmail.com', '1536412065', '2022-09-10'),
@@ -153,5 +171,6 @@ UPDATE loans SET return_date = '2025-03-09' WHERE loan_id = 2;
 SELECT * FROM overdue_notification;
 drop event overdue_book_notification;
 
+DROP event overdue_book_notification;
 
 
